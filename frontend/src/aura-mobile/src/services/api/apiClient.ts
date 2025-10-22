@@ -1,20 +1,10 @@
 import axios, { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 import { secureStorage } from '../storage/secureStorage';
-
-// API Base URL - uses localhost for iOS simulator, 10.0.2.2 for Android emulator
-const getApiUrl = () => {
-  if (__DEV__) {
-    // For iOS simulator, use localhost
-    // For Android emulator, use 10.0.2.2
-    // For physical device, use your computer's IP address
-    return 'http://localhost:5094/api';
-  }
-  return 'https://api.aura-app.com/api'; // Production URL
-};
+import { API_CONFIG } from '../../config/api.config';
 
 export const apiClient: AxiosInstance = axios.create({
-  baseURL: getApiUrl(),
-  timeout: 15000,
+  baseURL: API_CONFIG.BASE_URL,
+  timeout: API_CONFIG.TIMEOUT,
   headers: {
     'Content-Type': 'application/json',
   },
