@@ -1,0 +1,206 @@
+    # ==============================================
+# AURA PROJECT - Git Ignore
+# ==============================================
+# This excludes AI agent configs and docs from GitHub
+# Only the actual project code gets pushed
+
+# ==============================================
+# AI AGENT CONFIGURATIONS (EXCLUDE FROM GITHUB)
+# ==============================================
+.ai/
+.cursorrules
+.codex-config.md
+AI-AGENTS-GUIDE.md
+SETUP-GUIDE.md
+PROJECT-STRUCTURE.md
+
+# ==============================================
+# DOCUMENTATION (EXCLUDE FROM GITHUB)
+# ==============================================
+docs/
+README-LOCAL.md
+
+# ==============================================
+# BACKEND (.NET)
+# ==============================================
+
+## Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+## Visual Studio cache/options
+.vs/
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+## Rider
+.idea/
+*.sln.iml
+
+## User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+## Build Results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+
+## .NET Core
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+## NuGet Packages
+*.nupkg
+*.snupkg
+**/packages/*
+!**/packages/build/
+
+## Entity Framework
+*.mdf
+*.ldf
+*.ndf
+
+# ==============================================
+# FRONTEND (React Native / Expo)
+# ==============================================
+
+## Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+## Expo
+.expo/
+.expo-shared/
+dist/
+web-build/
+
+## Metro
+.metro-health-check*
+
+## React Native
+*.jsbundle
+
+## Build artifacts
+*.ipa
+*.apk
+*.aab
+
+# ==============================================
+# ENVIRONMENT & SECRETS
+# ==============================================
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+*.env
+
+## Secrets
+secrets/
+*.key
+*.pem
+*.p12
+*.pfx
+google-services.json
+GoogleService-Info.plist
+
+# ==============================================
+# DATABASE
+# ==============================================
+*.db
+*.sqlite
+*.sqlite3
+
+## PostgreSQL
+*.backup
+*.dump
+
+# ==============================================
+# LOGS
+# ==============================================
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ==============================================
+# OS FILES
+# ==============================================
+
+## macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+## Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+
+## Linux
+*~
+
+# ==============================================
+# IDE
+# ==============================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ==============================================
+# DOCKER
+# ==============================================
+docker-compose.override.yml
+
+# ==============================================
+# MISC
+# ==============================================
+*.tmp
+*.temp
+*.cache
+.cache/
+
+## Testing
+coverage/
+*.coverage
+.nyc_output/
+
+## Temporary files
+*.tmp
+*.bak
+*.swp
+*~.nibREADME-LOCAL.md
