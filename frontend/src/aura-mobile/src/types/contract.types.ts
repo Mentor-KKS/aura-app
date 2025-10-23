@@ -1,8 +1,11 @@
+import { ContractType } from './contractType';
+
 export interface Contract {
   id: string;
   userId: string;
   provider: string;
   category: string;
+  contractType: ContractType;
   costPerCycle: number;
   billingCycle: 'monthly' | 'yearly' | 'quarterly' | 'weekly';
   startDate: string;
@@ -20,6 +23,7 @@ export interface Contract {
 export interface CreateContractData {
   provider: string;
   category: string;
+  contractType?: ContractType;
   costPerCycle: number;
   billingCycle: 'monthly' | 'yearly' | 'quarterly' | 'weekly';
   startDate: string;

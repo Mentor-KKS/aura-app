@@ -21,6 +21,7 @@ public class AuraDbContext : DbContext
     public DbSet<Template> Templates => Set<Template>();
     public DbSet<Reminder> Reminders => Set<Reminder>();
     public DbSet<ReminderLevel> ReminderLevels => Set<ReminderLevel>();
+    public DbSet<UserReminder> UserReminders => Set<UserReminder>();
     public DbSet<Subscription> Subscriptions => Set<Subscription>();
     public DbSet<CancellationLetter> CancellationLetters => Set<CancellationLetter>();
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
@@ -101,6 +102,26 @@ public class AuraDbContext : DbContext
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("NOW()");
+        });
+
+        // UserReminder configuration
+        modelBuilder.Entity<UserReminder>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => e.UserId);
+            entity.HasIndex(e => e.DueDate);
+            entity.Property(e => e.Title).IsRequired().HasMaxLength(200);
+            entity.Property(e => e.Description).HasMaxLength(1000);
+            entity.Property(e => e.Priority).HasMaxLength(20);
+            entity.Property(e => e.RecurrencePattern).HasMaxLength(50);
+            entity.Property(e => e.Category).HasMaxLength(100);
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("NOW()");
+            entity.Property(e => e.UpdatedAt).HasDefaultValueSql("NOW()");
+
+            entity.HasOne(e => e.User)
+                .WithMany(u => u.UserReminders)
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         // Subscription configuration

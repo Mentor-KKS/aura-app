@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using AuraContract.Core.Enums;
 
 namespace AuraContract.Application.DTOs.Contracts;
 
@@ -11,6 +12,8 @@ public class CreateContractDto
     [Required(ErrorMessage = "Kategorie ist erforderlich")]
     [MaxLength(100)]
     public string Category { get; set; } = string.Empty;
+
+    public ContractType ContractType { get; set; } = ContractType.Subscription;
 
     [Required(ErrorMessage = "Kosten sind erforderlich")]
     [Range(0.01, double.MaxValue, ErrorMessage = "Kosten müssen größer als 0 sein")]

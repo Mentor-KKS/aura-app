@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using AuraContract.Core.Enums;
 
 namespace AuraContract.Application.DTOs.Contracts;
 
@@ -9,6 +10,8 @@ public class UpdateContractDto
 
     [MaxLength(100)]
     public string? Category { get; set; }
+
+    public ContractType? ContractType { get; set; }
 
     [Range(0.01, double.MaxValue, ErrorMessage = "Kosten müssen größer als 0 sein")]
     public decimal? CostPerCycle { get; set; }

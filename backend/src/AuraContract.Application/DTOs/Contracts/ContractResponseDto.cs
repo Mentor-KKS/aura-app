@@ -1,3 +1,5 @@
+using AuraContract.Core.Enums;
+
 namespace AuraContract.Application.DTOs.Contracts;
 
 public class ContractResponseDto
@@ -5,6 +7,7 @@ public class ContractResponseDto
     public Guid Id { get; set; }
     public string Provider { get; set; } = string.Empty;
     public string Category { get; set; } = string.Empty;
+    public ContractType ContractType { get; set; }
     public decimal CostPerCycle { get; set; }
     public string BillingCycle { get; set; } = string.Empty;
     public DateTime StartDate { get; set; }

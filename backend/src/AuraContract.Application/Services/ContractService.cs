@@ -42,6 +42,7 @@ public class ContractService : IContractService
             UserId = userId,
             Provider = dto.Provider,
             Category = dto.Category,
+            ContractType = dto.ContractType,
             CostPerCycle = dto.CostPerCycle,
             BillingCycle = dto.BillingCycle,
             StartDate = dto.StartDate,
@@ -68,6 +69,7 @@ public class ContractService : IContractService
 
         if (dto.Provider != null) contract.Provider = dto.Provider;
         if (dto.Category != null) contract.Category = dto.Category;
+        if (dto.ContractType.HasValue) contract.ContractType = dto.ContractType.Value;
         if (dto.CostPerCycle.HasValue) contract.CostPerCycle = dto.CostPerCycle.Value;
         if (dto.BillingCycle != null) contract.BillingCycle = dto.BillingCycle;
         if (dto.StartDate.HasValue) contract.StartDate = dto.StartDate.Value;
@@ -104,6 +106,7 @@ public class ContractService : IContractService
             Id = contract.Id,
             Provider = contract.Provider,
             Category = contract.Category,
+            ContractType = contract.ContractType,
             CostPerCycle = contract.CostPerCycle,
             BillingCycle = contract.BillingCycle,
             StartDate = contract.StartDate,

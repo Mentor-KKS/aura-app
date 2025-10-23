@@ -1,19 +1,17 @@
 using AuraContract.Core.Enums;
 
-namespace AuraContract.Core.Entities;
+namespace AuraContract.Application.DTOs.Templates;
 
-public class Template
+public class TemplateResponseDto
 {
     public Guid Id { get; set; }
     public string Provider { get; set; } = string.Empty;
     public string Category { get; set; } = string.Empty;
-    public ContractType ContractType { get; set; } = ContractType.Subscription;
+    public ContractType ContractType { get; set; }
     public string? LogoUrl { get; set; }
     public string? DefaultBillingCycle { get; set; }
     public decimal? EstimatedCost { get; set; }
     public int? DefaultNoticePeriodDays { get; set; }
-    public string? CommonFields { get; set; } // JSON for common fields
-    public bool IsActive { get; set; } = true;
-    public DateTime CreatedAt { get; set; }
-    public DateTime UpdatedAt { get; set; }
+    public string? CommonFields { get; set; }
+    public bool IsActive { get; set; }
 }

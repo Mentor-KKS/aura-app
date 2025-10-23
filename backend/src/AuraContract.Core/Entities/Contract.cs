@@ -1,3 +1,5 @@
+using AuraContract.Core.Enums;
+
 namespace AuraContract.Core.Entities;
 
 public class Contract
@@ -6,6 +8,7 @@ public class Contract
     public Guid UserId { get; set; }
     public string Provider { get; set; } = string.Empty;
     public string Category { get; set; } = string.Empty;
+    public ContractType ContractType { get; set; } = ContractType.Subscription;
     public decimal CostPerCycle { get; set; }
     public string BillingCycle { get; set; } = string.Empty; // monthly, yearly, quarterly
     public DateTime StartDate { get; set; }

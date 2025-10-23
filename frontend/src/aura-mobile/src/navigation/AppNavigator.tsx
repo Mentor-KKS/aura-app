@@ -3,8 +3,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { LoginScreen } from '../screens/auth/LoginScreen';
 import { RegisterScreen } from '../screens/auth/RegisterScreen';
-import { HomeScreen } from '../screens/app/HomeScreen';
-import { CreateContractScreen } from '../screens/app/CreateContractScreen';
+import { BottomTabNavigator } from './BottomTabNavigator';
+import { EditContractScreen } from '../screens/app/EditContractScreen';
 import { useAuthStore } from '../state/authStore';
 import { ActivityIndicator, View } from 'react-native';
 
@@ -34,13 +34,22 @@ export const AppNavigator: React.FC = () => {
             contentStyle: { backgroundColor: '#F9FAFB' },
           }}
         >
-          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="Main" component={BottomTabNavigator} />
           <Stack.Screen
             name="CreateContract"
-            component={CreateContractScreen}
+            component={EditContractScreen}
             options={{
               headerShown: true,
               title: 'Neuer Vertrag',
+              headerStyle: { backgroundColor: '#FFFFFF' },
+            }}
+          />
+          <Stack.Screen
+            name="EditContract"
+            component={EditContractScreen}
+            options={{
+              headerShown: true,
+              title: 'Vertrag bearbeiten',
               headerStyle: { backgroundColor: '#FFFFFF' },
             }}
           />

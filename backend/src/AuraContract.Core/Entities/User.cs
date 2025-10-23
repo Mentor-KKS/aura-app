@@ -17,5 +17,6 @@ public class User
     // Navigation properties
     public ICollection<Contract> Contracts { get; set; } = new List<Contract>();
     public ICollection<Device> Devices { get; set; } = new List<Device>();
+    public ICollection<UserReminder> UserReminders { get; set; } = new List<UserReminder>();
     public Subscription? Subscription { get; set; }
 }
