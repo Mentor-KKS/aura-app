@@ -19,8 +19,7 @@ export const AddNewScreen: React.FC<AddNewScreenProps> = ({ navigation }) => {
   };
 
   const handleAddReminder = () => {
-    // TODO: Implement reminder creation
-    console.log('Add reminder - to be implemented');
+    navigation.navigate('ReminderScreen');
   };
 
   const handleAddAppointment = () => {

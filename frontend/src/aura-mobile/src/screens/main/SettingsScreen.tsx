@@ -51,28 +51,23 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ navigation }) =>
   };
 
   const handleAccountSettings = () => {
-    // TODO: Implement account settings
-    console.log('Account settings - to be implemented');
+    navigation.navigate('AccountSettings');
   };
 
   const handleNotificationSettings = () => {
-    // TODO: Implement notification settings
-    console.log('Notification settings - to be implemented');
+    navigation.navigate('NotificationSettings');
   };
 
   const handlePrivacySettings = () => {
-    // TODO: Implement privacy settings
-    console.log('Privacy settings - to be implemented');
+    navigation.navigate('PrivacySettings');
   };
 
   const handleHelp = () => {
-    // TODO: Implement help screen
-    console.log('Help - to be implemented');
+    navigation.navigate('Help');
   };
 
   const handleAbout = () => {
-    // TODO: Implement about screen
-    console.log('About - to be implemented');
+    navigation.navigate('About');
   };
 
   return (

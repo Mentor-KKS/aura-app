@@ -5,6 +5,12 @@ import { LoginScreen } from '../screens/auth/LoginScreen';
 import { RegisterScreen } from '../screens/auth/RegisterScreen';
 import { BottomTabNavigator } from './BottomTabNavigator';
 import { EditContractScreen } from '../screens/app/EditContractScreen';
+import { ReminderScreen } from '../screens/main/ReminderScreen';
+import { AccountSettingsScreen } from '../screens/settings/AccountSettingsScreen';
+import { NotificationSettingsScreen } from '../screens/settings/NotificationSettingsScreen';
+import { PrivacySettingsScreen } from '../screens/settings/PrivacySettingsScreen';
+import { HelpScreen } from '../screens/settings/HelpScreen';
+import { AboutScreen } from '../screens/settings/AboutScreen';
 import { useAuthStore } from '../state/authStore';
 import { ActivityIndicator, View } from 'react-native';
 
@@ -50,6 +56,60 @@ export const AppNavigator: React.FC = () => {
             options={{
               headerShown: true,
               title: 'Vertrag bearbeiten',
+              headerStyle: { backgroundColor: '#FFFFFF' },
+            }}
+          />
+          <Stack.Screen
+            name="ReminderScreen"
+            component={ReminderScreen}
+            options={({ route }: any) => ({
+              headerShown: true,
+              title: route.params?.reminderId ? 'Erinnerung bearbeiten' : 'Neue Erinnerung',
+              headerStyle: { backgroundColor: '#FFFFFF' },
+            })}
+          />
+          <Stack.Screen
+            name="AccountSettings"
+            component={AccountSettingsScreen}
+            options={{
+              headerShown: true,
+              title: 'Konto',
+              headerStyle: { backgroundColor: '#FFFFFF' },
+            }}
+          />
+          <Stack.Screen
+            name="NotificationSettings"
+            component={NotificationSettingsScreen}
+            options={{
+              headerShown: true,
+              title: 'Benachrichtigungen',
+              headerStyle: { backgroundColor: '#FFFFFF' },
+            }}
+          />
+          <Stack.Screen
+            name="PrivacySettings"
+            component={PrivacySettingsScreen}
+            options={{
+              headerShown: true,
+              title: 'Datenschutz & Sicherheit',
+              headerStyle: { backgroundColor: '#FFFFFF' },
+            }}
+          />
+          <Stack.Screen
+            name="Help"
+            component={HelpScreen}
+            options={{
+              headerShown: true,
+              title: 'Hilfe',
+              headerStyle: { backgroundColor: '#FFFFFF' },
+            }}
+          />
+          <Stack.Screen
+            name="About"
+            component={AboutScreen}
+            options={{
+              headerShown: true,
+              title: 'Über',
               headerStyle: { backgroundColor: '#FFFFFF' },
             }}
           />

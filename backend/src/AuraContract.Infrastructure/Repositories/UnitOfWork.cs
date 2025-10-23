@@ -10,6 +10,7 @@ public class UnitOfWork : IUnitOfWork
     private IRepository<User>? _users;
     private IRepository<Contract>? _contracts;
     private IRepository<Template>? _templates;
+    private IRepository<UserReminder>? _userReminders;
 
     public UnitOfWork(AuraDbContext context)
     {
@@ -19,6 +20,7 @@ public class UnitOfWork : IUnitOfWork
     public IRepository<User> Users => _users ??= new Repository<User>(_context);
     public IRepository<Contract> Contracts => _contracts ??= new Repository<Contract>(_context);
     public IRepository<Template> Templates => _templates ??= new Repository<Template>(_context);
+    public IRepository<UserReminder> UserReminders => _userReminders ??= new Repository<UserReminder>(_context);
 
     public async Task<int> SaveChangesAsync()
     {
