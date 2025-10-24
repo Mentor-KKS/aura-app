@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { ChevronRight } from "lucide-react-native";
 import { Contract } from "../../types/contract.types";
 import { Card } from "../ui/Card";
+import { StatusBadge } from "../ui/StatusBadge";
+import { colors, spacing, typography, borderRadius } from "../../theme";
 
 interface ContractCardProps {
   contract: Contract;
@@ -15,6 +17,7 @@ export const ContractCard: React.FC<ContractCardProps> = ({
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
+  // Helper Functions
   const formatCurrency = (amount: number): string => {
     return new Intl.NumberFormat("de-DE", {
       style: "currency",
@@ -41,14 +44,17 @@ export const ContractCard: React.FC<ContractCardProps> = ({
     return labels[cycle] || cycle;
   };
 
-  const getStatusColor = (status: string): string => {
-    const colors: Record<string, string> = {
-      active: "#10B981",
-      cancelled: "#EF4444",
-      paused: "#F59E0B",
-      expired: "#6B7280",
+  const getStatusVariant = (status: string) => {
+    const variants: Record<
+      string,
+      "success" | "error" | "warning" | "neutral"
+    > = {
+      active: "success",
+      cancelled: "error",
+      paused: "warning",
+      expired: "neutral",
     };
-    return colors[status] || "#6B7280";
+    return variants[status] || "neutral";
   };
 
   const getStatusLabel = (status: string): string => {
@@ -67,177 +73,157 @@ export const ContractCard: React.FC<ContractCardProps> = ({
       activeOpacity={0.7}
     >
       <Card variant="elevated" style={styles.card}>
+        {/* Header - Always Visible */}
         <View style={styles.header}>
           <View style={styles.leftSection}>
             <Text style={styles.provider}>{contract.provider}</Text>
-            <View style={styles.bottomRow}>
-              <Text style={styles.category}>{contract.category}</Text>
-            </View>
+            <Text style={styles.category}>{contract.category}</Text>
           </View>
           <View style={styles.rightSection}>
-            <View
-              style={[
-                styles.statusBadge,
-                { backgroundColor: getStatusColor(contract.status) },
-              ]}
-            >
-              <Text style={styles.statusText}>
-                {getStatusLabel(contract.status)}
-              </Text>
-            </View>
-            <TouchableOpacity
-              onPress={(e) => {
-                e.stopPropagation();
-                onPress?.();
-              }}
-              style={styles.editButton}
-              activeOpacity={0.6}
-            >
-              <Text style={styles.editButtonText}>Bearbeiten</Text>
-              <ChevronRight color="#6B7280" size={16} />
-            </TouchableOpacity>
+            <StatusBadge
+              label={getStatusLabel(contract.status)}
+              variant={getStatusVariant(contract.status)}
+            />
           </View>
         </View>
 
         {/* Expanded Details */}
         {isExpanded && (
-          <>
-            <View style={styles.divider} />
-
-            <View style={styles.details}>
-              <View style={styles.detailRow}>
-                <Text style={styles.detailLabel}>Kosten:</Text>
-                <Text style={styles.detailValue}>
-                  {formatCurrency(contract.costPerCycle)} /{" "}
-                  {getBillingCycleLabel(contract.billingCycle)}
-                </Text>
-              </View>
-
-              <View style={styles.detailRow}>
-                <Text style={styles.detailLabel}>Startdatum:</Text>
-                <Text style={styles.detailValue}>
-                  {formatDate(contract.startDate)}
-                </Text>
-              </View>
-
-              {contract.nextRenewalDate && (
-                <View style={styles.detailRow}>
-                  <Text style={styles.detailLabel}>Nächste Verlängerung:</Text>
-                  <Text style={[styles.detailValue, styles.renewalDate]}>
-                    {formatDate(contract.nextRenewalDate)}
-                  </Text>
-                </View>
-              )}
-
-              {contract.cancellationNoticeDeadline && (
-                <View style={styles.detailRow}>
-                  <Text style={styles.detailLabel}>Kündigungsfrist:</Text>
-                  <Text style={[styles.detailValue, styles.deadlineDate]}>
-                    {formatDate(contract.cancellationNoticeDeadline)}
-                  </Text>
-                </View>
-              )}
-            </View>
-
-            {contract.notes && (
-              <>
-                <View style={styles.divider} />
-                <Text style={styles.notes} numberOfLines={3}>
-                  {contract.notes}
-                </Text>
-              </>
+          <View style={styles.details}>
+            <DetailRow
+              label="Kosten"
+              value={`${formatCurrency(
+                contract.costPerCycle
+              )} / ${getBillingCycleLabel(contract.billingCycle)}`}
+            />
+            {contract.startDate && (
+              <DetailRow
+                label="Startdatum"
+                value={formatDate(contract.startDate)}
+              />
             )}
-          </>
+            {contract.nextRenewalDate && (
+              <DetailRow
+                label="Nächste Verlängerung"
+                value={formatDate(contract.nextRenewalDate)}
+              />
+            )}
+            {contract.cancellationNoticeDeadline && (
+              <DetailRow
+                label="Kündigungsfrist"
+                value={formatDate(contract.cancellationNoticeDeadline)}
+              />
+            )}
+            {contract.notes && (
+              <View style={styles.notesSection}>
+                <Text style={styles.notesLabel}>Notizen:</Text>
+                <Text style={styles.notesText}>{contract.notes}</Text>
+              </View>
+            )}
+          </View>
         )}
+
+        {/* Edit Button - Always Visible */}
+        <TouchableOpacity
+          style={styles.editButton}
+          onPress={onPress}
+          activeOpacity={0.7}
+        >
+          <Text style={styles.editButtonText}>Bearbeiten</Text>
+          <ChevronRight size={16} color={colors.primary[500]} />
+        </TouchableOpacity>
       </Card>
     </TouchableOpacity>
   );
 };
 
+// Extracted Detail Row Component
+const DetailRow: React.FC<{ label: string; value: string }> = ({
+  label,
+  value,
+}) => (
+  <View style={styles.detailRow}>
+    <Text style={styles.detailLabel}>{label}:</Text>
+    <Text style={styles.detailValue}>{value}</Text>
+  </View>
+);
+
 const styles = StyleSheet.create({
   card: {
-    marginBottom: 12,
+    marginBottom: spacing.md,
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
-  },
-  rightSection: {
-    flex: 0,
+    marginBottom: spacing.md,
   },
   leftSection: {
     flex: 1,
-    marginRight: 12,
   },
   provider: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "#1F2937",
-    marginBottom: 8,
-  },
-  bottomRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    fontSize: typography.fontSize.lg,
+    fontWeight: typography.fontWeight.bold,
+    color: colors.text.primary,
+    marginBottom: spacing.xs,
   },
   category: {
-    fontSize: 13,
-    color: "#6B7280",
+    fontSize: typography.fontSize.sm,
+    color: colors.text.secondary,
   },
-  editButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
-  editButtonText: {
-    fontSize: 13,
-    fontWeight: "600",
-    color: "#6B7280",
-  },
-  statusBadge: {
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 12,
-    height: 24,
-    marginBottom: 8,
-  },
-  statusText: {
-    fontSize: 12,
-    fontWeight: "600",
-    color: "#FFFFFF",
-  },
-  divider: {
-    height: 1,
-    backgroundColor: "#E5E7EB",
-    marginVertical: 12,
+  rightSection: {
+    marginLeft: spacing.md,
   },
   details: {
-    gap: 8,
+    borderTopWidth: 1,
+    borderTopColor: colors.border.light,
+    paddingTop: spacing.md,
+    marginBottom: spacing.md,
   },
   detailRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
+    marginBottom: spacing.sm,
   },
   detailLabel: {
-    fontSize: 14,
-    color: "#6B7280",
+    fontSize: typography.fontSize.sm,
+    color: colors.text.secondary,
+    fontWeight: typography.fontWeight.medium,
   },
   detailValue: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#1F2937",
+    fontSize: typography.fontSize.sm,
+    color: colors.text.primary,
+    fontWeight: typography.fontWeight.semibold,
   },
-  renewalDate: {
-    color: "#10B981",
+  notesSection: {
+    marginTop: spacing.sm,
+    padding: spacing.md,
+    backgroundColor: colors.background.secondary,
+    borderRadius: borderRadius.md,
   },
-  deadlineDate: {
-    color: "#EF4444",
+  notesLabel: {
+    fontSize: typography.fontSize.sm,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.text.secondary,
+    marginBottom: spacing.xs,
   },
-  notes: {
-    fontSize: 14,
-    color: "#6B7280",
-    fontStyle: "italic",
+  notesText: {
+    fontSize: typography.fontSize.sm,
+    color: colors.text.primary,
+    lineHeight: typography.lineHeight.relaxed * typography.fontSize.sm,
+  },
+  editButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    paddingTop: spacing.md,
+    borderTopWidth: 1,
+    borderTopColor: colors.border.light,
+  },
+  editButtonText: {
+    fontSize: typography.fontSize.sm,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.primary[500],
+    marginRight: spacing.xs,
   },
 });

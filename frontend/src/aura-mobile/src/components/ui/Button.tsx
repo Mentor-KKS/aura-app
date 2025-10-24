@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   TouchableOpacity,
   Text,
@@ -6,13 +6,14 @@ import {
   ActivityIndicator,
   ViewStyle,
   TextStyle,
-} from 'react-native';
+} from "react-native";
+import { colors, spacing, typography, borderRadius } from "../../theme";
 
 interface ButtonProps {
   title: string;
   onPress: () => void;
-  variant?: 'primary' | 'secondary' | 'outline' | 'danger';
-  size?: 'small' | 'medium' | 'large';
+  variant?: "primary" | "secondary" | "outline" | "danger";
+  size?: "small" | "medium" | "large";
   disabled?: boolean;
   loading?: boolean;
   fullWidth?: boolean;
@@ -23,8 +24,8 @@ interface ButtonProps {
 export const Button: React.FC<ButtonProps> = ({
   title,
   onPress,
-  variant = 'primary',
-  size = 'medium',
+  variant = "primary",
+  size = "medium",
   disabled = false,
   loading = false,
   fullWidth = false,
@@ -49,7 +50,7 @@ export const Button: React.FC<ButtonProps> = ({
     >
       {loading ? (
         <ActivityIndicator
-          color={variant === 'outline' ? '#4F46E5' : '#FFFFFF'}
+          color={variant === "outline" ? colors.primary[500] : colors.text.inverse}
           size="small"
         />
       ) : (
@@ -70,69 +71,69 @@ export const Button: React.FC<ButtonProps> = ({
 
 const styles = StyleSheet.create({
   button: {
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
+    borderRadius: borderRadius.lg,
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
   },
   // Variants
   primary: {
-    backgroundColor: '#4F46E5',
+    backgroundColor: colors.primary[500],
   },
   secondary: {
-    backgroundColor: '#10B981',
+    backgroundColor: colors.success.main,
   },
   outline: {
-    backgroundColor: 'transparent',
-    borderWidth: 2,
-    borderColor: '#4F46E5',
+    backgroundColor: "transparent",
+    borderWidth: 1,
+    borderColor: colors.primary[500],
   },
   danger: {
-    backgroundColor: '#EF4444',
+    backgroundColor: colors.error.main,
   },
   // Sizes
   small: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.lg,
   },
   medium: {
-    paddingVertical: 12,
-    paddingHorizontal: 24,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.xl,
   },
   large: {
-    paddingVertical: 16,
-    paddingHorizontal: 32,
+    paddingVertical: spacing.lg,
+    paddingHorizontal: spacing.xxl,
   },
   // States
   disabled: {
     opacity: 0.5,
   },
   fullWidth: {
-    width: '100%',
+    width: "100%",
   },
   // Text styles
   text: {
-    fontWeight: '600',
+    fontWeight: typography.fontWeight.semibold,
   },
   primaryText: {
-    color: '#FFFFFF',
+    color: colors.text.inverse,
   },
   secondaryText: {
-    color: '#FFFFFF',
+    color: colors.text.inverse,
   },
   outlineText: {
-    color: '#4F46E5',
+    color: colors.primary[500],
   },
   dangerText: {
-    color: '#FFFFFF',
+    color: colors.text.inverse,
   },
   smallText: {
-    fontSize: 14,
+    fontSize: typography.fontSize.sm,
   },
   mediumText: {
-    fontSize: 16,
+    fontSize: typography.fontSize.md,
   },
   largeText: {
-    fontSize: 18,
+    fontSize: typography.fontSize.lg,
   },
 });

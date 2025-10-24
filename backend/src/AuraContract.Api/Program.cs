@@ -25,6 +25,7 @@ builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 // Add Application Services
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IContractService, ContractService>();
 builder.Services.AddScoped<ITemplateService, TemplateService>();
 builder.Services.AddScoped<IReminderService, ReminderService>();

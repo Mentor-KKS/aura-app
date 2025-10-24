@@ -11,6 +11,7 @@ import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { useAuthStore } from '../../state/authStore';
 import { useUIStore } from '../../state/uiStore';
+import { userApi } from '../../services/userApi';
 
 interface AccountSettingsScreenProps {
   navigation: any;
@@ -19,8 +20,9 @@ interface AccountSettingsScreenProps {
 export const AccountSettingsScreen: React.FC<AccountSettingsScreenProps> = ({
   navigation,
 }) => {
-  const { user } = useAuthStore();
+  const { user, logout, setUser } = useAuthStore();
   const { showToast } = useUIStore();
+  const [isLoading, setIsLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     firstName: user?.firstName || '',
@@ -36,11 +38,28 @@ export const AccountSettingsScreen: React.FC<AccountSettingsScreenProps> = ({
   });
 
   const handleUpdateProfile = async () => {
+    setIsLoading(true);
     try {
-      // TODO: Implement API call to update profile
+      const updatedProfile = await userApi.updateProfile({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        phoneNumber: formData.phoneNumber || undefined,
+      });
+
+      // Update user in auth store
+      if (user) {
+        setUser({
+          ...user,
+          firstName: updatedProfile.firstName,
+          lastName: updatedProfile.lastName,
+        });
+      }
+
       showToast('success', 'Profil erfolgreich aktualisiert!');
     } catch (error: any) {
       showToast('error', error.message || 'Fehler beim Aktualisieren des Profils');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -50,13 +69,18 @@ export const AccountSettingsScreen: React.FC<AccountSettingsScreenProps> = ({
       return;
     }
 
-    if (passwordData.newPassword.length < 6) {
-      showToast('error', 'Passwort muss mindestens 6 Zeichen lang sein');
+    if (passwordData.newPassword.length < 8) {
+      showToast('error', 'Passwort muss mindestens 8 Zeichen lang sein');
       return;
     }
 
+    setIsLoading(true);
     try {
-      // TODO: Implement API call to change password
+      await userApi.changePassword({
+        currentPassword: passwordData.currentPassword,
+        newPassword: passwordData.newPassword,
+      });
+
       showToast('success', 'Passwort erfolgreich geändert!');
       setPasswordData({
         currentPassword: '',
@@ -65,6 +89,8 @@ export const AccountSettingsScreen: React.FC<AccountSettingsScreenProps> = ({
       });
     } catch (error: any) {
       showToast('error', error.message || 'Fehler beim Ändern des Passworts');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -81,8 +107,10 @@ export const AccountSettingsScreen: React.FC<AccountSettingsScreenProps> = ({
           text: 'Löschen',
           style: 'destructive',
           onPress: async () => {
+            setIsLoading(true);
             try {
-              // TODO: Implement API call to delete account
+              await userApi.deleteAccount();
+              await logout();
               showToast('success', 'Konto erfolgreich gelöscht');
               navigation.reset({
                 index: 0,
@@ -90,6 +118,8 @@ export const AccountSettingsScreen: React.FC<AccountSettingsScreenProps> = ({
               });
             } catch (error: any) {
               showToast('error', error.message || 'Fehler beim Löschen des Kontos');
+            } finally {
+              setIsLoading(false);
             }
           },
         },
@@ -139,6 +169,7 @@ export const AccountSettingsScreen: React.FC<AccountSettingsScreenProps> = ({
           <Button
             title="Profil aktualisieren"
             onPress={handleUpdateProfile}
+            loading={isLoading}
             style={styles.button}
           />
         </Card>
@@ -181,6 +212,7 @@ export const AccountSettingsScreen: React.FC<AccountSettingsScreenProps> = ({
           <Button
             title="Passwort ändern"
             onPress={handleChangePassword}
+            loading={isLoading}
             style={styles.button}
           />
         </Card>

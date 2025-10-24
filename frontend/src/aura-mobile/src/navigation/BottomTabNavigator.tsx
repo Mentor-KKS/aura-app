@@ -32,7 +32,7 @@ export const BottomTabNavigator: React.FC = () => {
           paddingRight: 8,
         },
         tabBarLabelStyle: {
-          fontSize: 12,
+          fontSize: 10,
           fontWeight: "500",
           paddingTop: 3,
         },
@@ -44,7 +44,7 @@ export const BottomTabNavigator: React.FC = () => {
           borderBottomColor: "#E5E7EB",
         },
         headerTitleStyle: {
-          fontSize: 20,
+          fontSize: 16,
           fontWeight: "600",
           color: "#1F2937",
         },

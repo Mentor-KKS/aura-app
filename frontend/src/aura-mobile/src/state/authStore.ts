@@ -15,6 +15,7 @@ interface AuthState {
   register: (data: RegisterData) => Promise<void>;
   logout: () => Promise<void>;
   loadStoredAuth: () => Promise<void>;
+  setUser: (user: User) => Promise<void>;
   clearError: () => void;
 }
 
@@ -145,6 +146,11 @@ export const useAuthStore = create<AuthState>((set) => ({
     } catch (err) {
       set({ isLoading: false });
     }
+  },
+
+  setUser: async (user: User) => {
+    await secureStorage.setUser(user);
+    set({ user });
   },
 
   clearError: () => set({ error: null }),

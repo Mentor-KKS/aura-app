@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -9,41 +9,50 @@ import {
   TouchableOpacity,
   Modal,
   Alert,
-} from 'react-native';
-import { Button } from '../../components/ui/Button';
-import { Input } from '../../components/ui/Input';
-import { DecimalInput } from '../../components/ui/DecimalInput';
-import { TemplateSelector } from '../../components/templates/TemplateSelector';
-import { useContractStore } from '../../state/contractStore';
-import { useTemplateStore } from '../../state/templateStore';
-import { useUIStore } from '../../state/uiStore';
-import { parseGermanDecimal } from '../../utils/formatting';
-import { Template } from '../../types/template.types';
-import { ContractType, CONTRACT_TYPE_LABELS } from '../../types/contractType';
+} from "react-native";
+import { Button } from "../../components/ui/Button";
+import { Input } from "../../components/ui/Input";
+import { DecimalInput } from "../../components/ui/DecimalInput";
+import { TemplateSelector } from "../../components/templates/TemplateSelector";
+import { useContractStore } from "../../state/contractStore";
+import { useTemplateStore } from "../../state/templateStore";
+import { useUIStore } from "../../state/uiStore";
+import { parseGermanDecimal } from "../../utils/formatting";
+import { Template } from "../../types/template.types";
+import { ContractType, CONTRACT_TYPE_LABELS } from "../../types/contractType";
 
 interface EditContractScreenProps {
   navigation: any;
   route?: any;
 }
 
-export const EditContractScreen: React.FC<EditContractScreenProps> = ({ navigation, route }) => {
+export const EditContractScreen: React.FC<EditContractScreenProps> = ({
+  navigation,
+  route,
+}) => {
   const contractId = route?.params?.contractId;
   const isEditMode = !!contractId;
 
   const [showTemplateSelector, setShowTemplateSelector] = useState(false);
   const [formData, setFormData] = useState({
-    provider: '',
-    category: '',
+    provider: "",
+    category: "",
     contractType: ContractType.Subscription,
-    costPerCycle: '',
-    billingCycle: 'monthly' as 'monthly' | 'yearly' | 'quarterly' | 'weekly',
-    startDate: new Date().toISOString().split('T')[0],
-    cancellationNoticePeriodDays: '',
-    notes: '',
+    costPerCycle: "",
+    billingCycle: "monthly" as "monthly" | "yearly" | "quarterly" | "weekly",
+    startDate: new Date().toISOString().split("T")[0],
+    cancellationNoticePeriodDays: "",
+    notes: "",
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const { contracts, createContract, updateContract, deleteContract, isLoading } = useContractStore();
+  const {
+    contracts,
+    createContract,
+    updateContract,
+    deleteContract,
+    isLoading,
+  } = useContractStore();
   const { selectedTemplate, selectTemplate } = useTemplateStore();
   const { showToast } = useUIStore();
 
@@ -53,9 +62,11 @@ export const EditContractScreen: React.FC<EditContractScreenProps> = ({ navigati
       const existingContract = contracts.find((c) => c.id === contractId);
       if (existingContract) {
         // Calculate days from cancellationNoticeDeadline if it exists
-        let noticeDays = '';
+        let noticeDays = "";
         if (existingContract.cancellationNoticeDeadline) {
-          const deadline = new Date(existingContract.cancellationNoticeDeadline);
+          const deadline = new Date(
+            existingContract.cancellationNoticeDeadline
+          );
           const start = new Date(existingContract.startDate);
           const diffTime = Math.abs(deadline.getTime() - start.getTime());
           const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -65,12 +76,15 @@ export const EditContractScreen: React.FC<EditContractScreenProps> = ({ navigati
         setFormData({
           provider: existingContract.provider,
           category: existingContract.category,
-          contractType: existingContract.contractType ?? ContractType.Subscription,
-          costPerCycle: existingContract.costPerCycle.toFixed(2).replace('.', ','),
+          contractType:
+            existingContract.contractType ?? ContractType.Subscription,
+          costPerCycle: existingContract.costPerCycle
+            .toFixed(2)
+            .replace(".", ","),
           billingCycle: existingContract.billingCycle,
-          startDate: existingContract.startDate.split('T')[0],
+          startDate: existingContract.startDate.split("T")[0],
           cancellationNoticePeriodDays: noticeDays,
-          notes: existingContract.notes || '',
+          notes: existingContract.notes || "",
         });
       }
     }
@@ -90,23 +104,25 @@ export const EditContractScreen: React.FC<EditContractScreenProps> = ({ navigati
       category: template.category,
       contractType: template.contractType ?? ContractType.Subscription,
       costPerCycle: template.estimatedCost
-        ? template.estimatedCost.toFixed(2).replace('.', ',')
+        ? template.estimatedCost.toFixed(2).replace(".", ",")
         : prev.costPerCycle,
-      billingCycle: mapBillingCycle(template.defaultBillingCycle) || prev.billingCycle,
-      cancellationNoticePeriodDays: template.defaultNoticePeriodDays?.toString() || '',
+      billingCycle:
+        mapBillingCycle(template.defaultBillingCycle) || prev.billingCycle,
+      cancellationNoticePeriodDays:
+        template.defaultNoticePeriodDays?.toString() || "",
     }));
     setShowTemplateSelector(false);
   };
 
   const mapBillingCycle = (
     cycle?: string
-  ): 'monthly' | 'yearly' | 'quarterly' | 'weekly' | undefined => {
+  ): "monthly" | "yearly" | "quarterly" | "weekly" | undefined => {
     if (!cycle) return undefined;
     const cycleLower = cycle.toLowerCase();
-    if (cycleLower.includes('monat')) return 'monthly';
-    if (cycleLower.includes('jahr')) return 'yearly';
-    if (cycleLower.includes('quartal')) return 'quarterly';
-    if (cycleLower.includes('woche')) return 'weekly';
+    if (cycleLower.includes("monat")) return "monthly";
+    if (cycleLower.includes("jahr")) return "yearly";
+    if (cycleLower.includes("quartal")) return "quarterly";
+    if (cycleLower.includes("woche")) return "weekly";
     return undefined;
   };
 
@@ -114,24 +130,24 @@ export const EditContractScreen: React.FC<EditContractScreenProps> = ({ navigati
     const newErrors: Record<string, string> = {};
 
     if (!formData.provider) {
-      newErrors.provider = 'Anbieter ist erforderlich';
+      newErrors.provider = "Anbieter ist erforderlich";
     }
 
     if (!formData.category) {
-      newErrors.category = 'Kategorie ist erforderlich';
+      newErrors.category = "Kategorie ist erforderlich";
     }
 
     if (!formData.costPerCycle) {
-      newErrors.costPerCycle = 'Kosten sind erforderlich';
+      newErrors.costPerCycle = "Kosten sind erforderlich";
     } else {
       const numericValue = parseGermanDecimal(formData.costPerCycle);
       if (isNaN(numericValue) || numericValue <= 0) {
-        newErrors.costPerCycle = 'Ungültiger Betrag';
+        newErrors.costPerCycle = "Ungültiger Betrag";
       }
     }
 
     if (!formData.startDate) {
-      newErrors.startDate = 'Startdatum ist erforderlich';
+      newErrors.startDate = "Startdatum ist erforderlich";
     }
 
     setErrors(newErrors);
@@ -167,15 +183,15 @@ export const EditContractScreen: React.FC<EditContractScreenProps> = ({ navigati
 
       if (isEditMode) {
         await updateContract(contractId, contractData);
-        showToast('success', 'Vertrag erfolgreich aktualisiert!');
+        showToast("success", "Vertrag erfolgreich aktualisiert!");
       } else {
         await createContract(contractData);
-        showToast('success', 'Vertrag erfolgreich erstellt!');
+        showToast("success", "Vertrag erfolgreich erstellt!");
       }
 
       navigation.goBack();
     } catch (error: any) {
-      showToast('error', error.message || 'Fehler beim Speichern des Vertrags');
+      showToast("error", error.message || "Fehler beim Speichern des Vertrags");
     }
   };
 
@@ -190,23 +206,26 @@ export const EditContractScreen: React.FC<EditContractScreenProps> = ({ navigati
 
   const handleDelete = () => {
     Alert.alert(
-      'Vertrag löschen',
-      'Möchten Sie diesen Vertrag wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.',
+      "Vertrag löschen",
+      "Möchten Sie diesen Vertrag wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
       [
         {
-          text: 'Abbrechen',
-          style: 'cancel',
+          text: "Abbrechen",
+          style: "cancel",
         },
         {
-          text: 'Löschen',
-          style: 'destructive',
+          text: "Löschen",
+          style: "destructive",
           onPress: async () => {
             try {
               await deleteContract(contractId);
-              showToast('success', 'Vertrag erfolgreich gelöscht!');
+              showToast("success", "Vertrag erfolgreich gelöscht!");
               navigation.goBack();
             } catch (error: any) {
-              showToast('error', error.message || 'Fehler beim Löschen des Vertrags');
+              showToast(
+                "error",
+                error.message || "Fehler beim Löschen des Vertrags"
+              );
             }
           },
         },
@@ -217,7 +236,7 @@ export const EditContractScreen: React.FC<EditContractScreenProps> = ({ navigati
   return (
     <KeyboardAvoidingView
       style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <ScrollView
         contentContainerStyle={styles.scrollContent}
@@ -225,10 +244,12 @@ export const EditContractScreen: React.FC<EditContractScreenProps> = ({ navigati
       >
         <View style={styles.header}>
           <Text style={styles.title}>
-            {isEditMode ? 'Vertrag bearbeiten' : 'Neuer Vertrag'}
+            {isEditMode ? "Vertrag bearbeiten" : "Neuer Vertrag"}
           </Text>
           <Text style={styles.subtitle}>
-            {isEditMode ? 'Ändern Sie die Vertragsdaten' : 'Fügen Sie einen neuen Vertrag hinzu'}
+            {isEditMode
+              ? "Ändern Sie die Vertragsdaten"
+              : "Fügen Sie einen neuen Vertrag hinzu"}
           </Text>
         </View>
 
@@ -241,7 +262,7 @@ export const EditContractScreen: React.FC<EditContractScreenProps> = ({ navigati
             <Text style={styles.templateButtonSubtext}>
               {selectedTemplate
                 ? `Aktuell: ${selectedTemplate.provider}`
-                : 'Wählen Sie eine Vorlage für schnelleres Ausfüllen'}
+                : "Wählen Sie eine Vorlage für schnelleres Ausfüllen"}
             </Text>
           </TouchableOpacity>
         )}
@@ -251,7 +272,7 @@ export const EditContractScreen: React.FC<EditContractScreenProps> = ({ navigati
             label="Anbieter"
             placeholder="z.B. Netflix, Telekom, ..."
             value={formData.provider}
-            onChangeText={(text) => updateField('provider', text)}
+            onChangeText={(text) => updateField("provider", text)}
             error={errors.provider}
             required
           />
@@ -260,7 +281,7 @@ export const EditContractScreen: React.FC<EditContractScreenProps> = ({ navigati
             label="Kategorie"
             placeholder="z.B. Streaming, Telekom, Versicherung, ..."
             value={formData.category}
-            onChangeText={(text) => updateField('category', text)}
+            onChangeText={(text) => updateField("category", text)}
             error={errors.category}
             required
           />
@@ -271,15 +292,28 @@ export const EditContractScreen: React.FC<EditContractScreenProps> = ({ navigati
             </Text>
             <View style={styles.contractTypeButtons}>
               {[
-                { key: ContractType.Subscription, label: CONTRACT_TYPE_LABELS[ContractType.Subscription] },
-                { key: ContractType.Contract, label: CONTRACT_TYPE_LABELS[ContractType.Contract] },
-                { key: ContractType.Membership, label: CONTRACT_TYPE_LABELS[ContractType.Membership] },
+                {
+                  key: ContractType.Subscription,
+                  label: CONTRACT_TYPE_LABELS[ContractType.Subscription],
+                },
+                {
+                  key: ContractType.Contract,
+                  label: CONTRACT_TYPE_LABELS[ContractType.Contract],
+                },
+                {
+                  key: ContractType.Membership,
+                  label: CONTRACT_TYPE_LABELS[ContractType.Membership],
+                },
               ].map((option) => (
                 <Button
                   key={option.key}
                   title={option.label}
-                  onPress={() => setFormData({ ...formData, contractType: option.key })}
-                  variant={formData.contractType === option.key ? 'primary' : 'outline'}
+                  onPress={() =>
+                    setFormData({ ...formData, contractType: option.key })
+                  }
+                  variant={
+                    formData.contractType === option.key ? "primary" : "outline"
+                  }
                   size="small"
                   style={styles.contractTypeButton}
                 />
@@ -291,7 +325,7 @@ export const EditContractScreen: React.FC<EditContractScreenProps> = ({ navigati
             label="Kosten pro Abrechnungszeitraum"
             placeholder="12,99"
             value={formData.costPerCycle}
-            onChangeText={(text) => updateField('costPerCycle', text)}
+            onChangeText={(text) => updateField("costPerCycle", text)}
             error={errors.costPerCycle}
             required
           />
@@ -302,16 +336,18 @@ export const EditContractScreen: React.FC<EditContractScreenProps> = ({ navigati
             </Text>
             <View style={styles.billingCycleButtons}>
               {[
-                { key: 'monthly', label: 'Monatlich' },
-                { key: 'quarterly', label: 'Quartalsweise' },
-                { key: 'yearly', label: 'Jährlich' },
-                { key: 'weekly', label: 'Wöchentlich' },
+                { key: "monthly", label: "Monatlich" },
+                { key: "quarterly", label: "Quartalsweise" },
+                { key: "yearly", label: "Jährlich" },
+                { key: "weekly", label: "Wöchentlich" },
               ].map((option) => (
                 <Button
                   key={option.key}
                   title={option.label}
-                  onPress={() => updateField('billingCycle', option.key)}
-                  variant={formData.billingCycle === option.key ? 'primary' : 'outline'}
+                  onPress={() => updateField("billingCycle", option.key)}
+                  variant={
+                    formData.billingCycle === option.key ? "primary" : "outline"
+                  }
                   size="small"
                   style={styles.billingCycleButton}
                 />
@@ -323,7 +359,7 @@ export const EditContractScreen: React.FC<EditContractScreenProps> = ({ navigati
             label="Startdatum"
             placeholder="YYYY-MM-DD"
             value={formData.startDate}
-            onChangeText={(text) => updateField('startDate', text)}
+            onChangeText={(text) => updateField("startDate", text)}
             error={errors.startDate}
             required
           />
@@ -332,7 +368,9 @@ export const EditContractScreen: React.FC<EditContractScreenProps> = ({ navigati
             label="Kündigungsfrist (Tage)"
             placeholder="z.B. 30"
             value={formData.cancellationNoticePeriodDays}
-            onChangeText={(text) => updateField('cancellationNoticePeriodDays', text)}
+            onChangeText={(text) =>
+              updateField("cancellationNoticePeriodDays", text)
+            }
             keyboardType="numeric"
           />
 
@@ -340,7 +378,7 @@ export const EditContractScreen: React.FC<EditContractScreenProps> = ({ navigati
             label="Notizen"
             placeholder="Optionale Notizen..."
             value={formData.notes}
-            onChangeText={(text) => updateField('notes', text)}
+            onChangeText={(text) => updateField("notes", text)}
             multiline
             numberOfLines={4}
             style={styles.notesInput}
@@ -354,7 +392,7 @@ export const EditContractScreen: React.FC<EditContractScreenProps> = ({ navigati
               style={styles.actionButton}
             />
             <Button
-              title={isEditMode ? 'Aktualisieren' : 'Erstellen'}
+              title={isEditMode ? "Aktualisieren" : "Erstellen"}
               onPress={handleSave}
               loading={isLoading}
               style={styles.actionButton}
@@ -401,7 +439,7 @@ export const EditContractScreen: React.FC<EditContractScreenProps> = ({ navigati
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F9FAFB',
+    backgroundColor: "#F9FAFB",
   },
   scrollContent: {
     padding: 24,
@@ -411,75 +449,75 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   title: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: '#1F2937',
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#1F2937",
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 14,
-    color: '#6B7280',
+    color: "#6B7280",
   },
   templateButton: {
-    backgroundColor: '#EFF6FF',
+    backgroundColor: "#EFF6FF",
     borderWidth: 1,
-    borderColor: '#BFDBFE',
+    borderColor: "#BFDBFE",
     borderRadius: 12,
     padding: 16,
     marginBottom: 24,
   },
   templateButtonText: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#1E40AF',
+    fontWeight: "600",
+    color: "#1E40AF",
     marginBottom: 4,
   },
   templateButtonSubtext: {
     fontSize: 13,
-    color: '#60A5FA',
+    color: "#60A5FA",
   },
   form: {
-    width: '100%',
+    width: "100%",
   },
   contractTypeContainer: {
     marginBottom: 16,
   },
   contractTypeButtons: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: 8,
   },
   contractTypeButton: {
     flex: 1,
-    minWidth: '30%',
+    minWidth: "30%",
   },
   billingCycleContainer: {
     marginBottom: 16,
   },
   label: {
     fontSize: 14,
-    fontWeight: '600',
-    color: '#374151',
+    fontWeight: "600",
+    color: "#374151",
     marginBottom: 8,
   },
   required: {
-    color: '#EF4444',
+    color: "#EF4444",
   },
   billingCycleButtons: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: 8,
   },
   billingCycleButton: {
     flex: 1,
-    minWidth: '45%',
+    minWidth: "45%",
   },
   notesInput: {
     minHeight: 100,
-    textAlignVertical: 'top',
+    textAlignVertical: "top",
   },
   actions: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 12,
     marginTop: 24,
   },
@@ -490,25 +528,25 @@ const styles = StyleSheet.create({
     marginTop: 24,
     paddingTop: 24,
     borderTopWidth: 1,
-    borderTopColor: '#E5E7EB',
+    borderTopColor: "#E5E7EB",
   },
   deleteButton: {
-    borderColor: '#EF4444',
+    borderColor: "#EF4444",
   },
   modalContainer: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
   },
   modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
+    flexDirection: "row",
+    justifyContent: "flex-end",
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
+    borderBottomColor: "#E5E7EB",
   },
   modalCloseButton: {
     fontSize: 24,
-    color: '#6B7280',
-    fontWeight: '600',
+    color: "#6B7280",
+    fontWeight: "600",
   },
 });

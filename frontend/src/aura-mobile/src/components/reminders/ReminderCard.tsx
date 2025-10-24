@@ -2,7 +2,9 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Bell, CheckCircle, Circle, AlertCircle } from 'lucide-react-native';
 import { Card } from '../ui/Card';
+import { StatusBadge } from '../ui/StatusBadge';
 import { Reminder } from '../../types/reminder.types';
+import { colors, spacing, typography, borderRadius } from '../../theme';
 
 interface ReminderCardProps {
   reminder: Reminder;
@@ -10,14 +12,23 @@ interface ReminderCardProps {
   onToggleComplete?: () => void;
 }
 
+/**
+ * Refactored ReminderCard mit Theme System
+ * - Verwendet Theme statt hardcoded colors
+ * - Nutzt StatusBadge Component
+ * - Cleaner Code Structure
+ */
 export const ReminderCard: React.FC<ReminderCardProps> = ({
   reminder,
   onPress,
   onToggleComplete,
 }) => {
+  // Helper Functions
   const getDaysUntilDue = (): number => {
     const dueDate = new Date(reminder.dueDate);
     const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    dueDate.setHours(0, 0, 0, 0);
     const diffTime = dueDate.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return diffDays;
@@ -32,16 +43,16 @@ export const ReminderCard: React.FC<ReminderCardProps> = ({
     });
   };
 
-  const getPriorityColor = (): string => {
+  const getPriorityVariant = (): "success" | "warning" | "error" | "neutral" => {
     switch (reminder.priority) {
       case 'high':
-        return '#EF4444';
+        return 'error';
       case 'medium':
-        return '#F59E0B';
+        return 'warning';
       case 'low':
-        return '#10B981';
+        return 'success';
       default:
-        return '#6B7280';
+        return 'neutral';
     }
   };
 
@@ -58,49 +69,76 @@ export const ReminderCard: React.FC<ReminderCardProps> = ({
     }
   };
 
-  const daysUntilDue = getDaysUntilDue();
-  const priorityColor = getPriorityColor();
-  const isOverdue = daysUntilDue < 0 && !reminder.isCompleted;
+  const getUrgencyInfo = () => {
+    const daysUntil = getDaysUntilDue();
+
+    if (reminder.isCompleted) {
+      return { text: 'Erledigt', color: colors.text.tertiary, icon: 'completed' };
+    }
+
+    if (daysUntil < 0) {
+      return { text: `${Math.abs(daysUntil)} Tage überfällig`, color: colors.deadline.overdue, icon: 'overdue' };
+    } else if (daysUntil === 0) {
+      return { text: 'Heute fällig', color: colors.deadline.thisWeek, icon: 'today' };
+    } else if (daysUntil === 1) {
+      return { text: 'Morgen fällig', color: colors.deadline.thisWeek, icon: 'soon' };
+    } else if (daysUntil <= 7) {
+      return { text: `In ${daysUntil} Tagen`, color: colors.deadline.thisMonth, icon: 'normal' };
+    } else {
+      return { text: `In ${daysUntil} Tagen`, color: colors.text.secondary, icon: 'normal' };
+    }
+  };
+
+  const urgency = getUrgencyInfo();
+
+  const getIconComponent = () => {
+    if (reminder.isCompleted) {
+      return <CheckCircle size={20} color={colors.success.main} />;
+    }
+
+    switch (urgency.icon) {
+      case 'overdue':
+        return <AlertCircle size={20} color={colors.error.main} />;
+      case 'today':
+      case 'soon':
+        return <Bell size={20} color={colors.warning.main} />;
+      default:
+        return <Circle size={20} color={colors.text.tertiary} />;
+    }
+  };
+
+  const cardStyle = reminder.isCompleted
+    ? { ...styles.card, ...styles.completedCard }
+    : styles.card;
 
   return (
     <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
       <Card
-        style={[
-          styles.card,
-          reminder.isCompleted && styles.completedCard,
-          isOverdue && styles.overdueCard,
-        ]}
+        variant="elevated"
+        style={cardStyle}
       >
         <View style={styles.content}>
-          {/* Left: Checkbox */}
-          <TouchableOpacity
-            onPress={onToggleComplete}
-            style={styles.checkboxContainer}
-            activeOpacity={0.6}
-          >
-            {reminder.isCompleted ? (
-              <CheckCircle color="#10B981" size={24} fill="#10B981" />
-            ) : (
-              <Circle color="#9CA3AF" size={24} />
-            )}
-          </TouchableOpacity>
+          {/* Left: Icon */}
+          {onToggleComplete && (
+            <TouchableOpacity
+              style={styles.iconContainer}
+              onPress={onToggleComplete}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            >
+              {getIconComponent()}
+            </TouchableOpacity>
+          )}
 
-          {/* Center: Content */}
-          <View style={styles.mainContent}>
-            <View style={styles.headerRow}>
-              <Text
-                style={[
-                  styles.title,
-                  reminder.isCompleted && styles.completedText,
-                ]}
-                numberOfLines={1}
-              >
-                {reminder.title}
-              </Text>
-              {isOverdue && (
-                <AlertCircle color="#EF4444" size={18} style={styles.overdueIcon} />
-              )}
-            </View>
+          {/* Middle: Content */}
+          <View style={styles.textContent}>
+            <Text
+              style={[
+                styles.title,
+                reminder.isCompleted && styles.completedText,
+              ]}
+            >
+              {reminder.title}
+            </Text>
 
             {reminder.description && (
               <Text
@@ -114,62 +152,18 @@ export const ReminderCard: React.FC<ReminderCardProps> = ({
               </Text>
             )}
 
-            <View style={styles.footer}>
-              <View style={styles.footerLeft}>
-                <View
-                  style={[
-                    styles.priorityBadge,
-                    { backgroundColor: `${priorityColor}15` },
-                  ]}
-                >
-                  <Text style={[styles.priorityText, { color: priorityColor }]}>
-                    {getPriorityLabel()}
-                  </Text>
-                </View>
-
-                {reminder.category && (
-                  <View style={styles.categoryBadge}>
-                    <Text style={styles.categoryText}>{reminder.category}</Text>
-                  </View>
-                )}
-
-                {reminder.isRecurring && (
-                  <View style={styles.recurringBadge}>
-                    <Text style={styles.recurringText}>Wiederkehrend</Text>
-                  </View>
-                )}
-              </View>
+            <View style={styles.meta}>
+              <Text style={[styles.dueDate, { color: urgency.color }]}>
+                {urgency.text} • {formatDate(reminder.dueDate)}
+              </Text>
             </View>
           </View>
 
-          {/* Right: Date */}
-          <View style={styles.dateContainer}>
-            <Text
-              style={[
-                styles.date,
-                isOverdue && styles.overdueDate,
-                reminder.isCompleted && styles.completedText,
-              ]}
-            >
-              {formatDate(reminder.dueDate)}
-            </Text>
-            {!reminder.isCompleted && (
-              <Text
-                style={[
-                  styles.daysLeft,
-                  isOverdue && styles.overdueDaysLeft,
-                ]}
-              >
-                {isOverdue
-                  ? `${Math.abs(daysUntilDue)} Tag${Math.abs(daysUntilDue) !== 1 ? 'e' : ''} überfällig`
-                  : daysUntilDue === 0
-                  ? 'Heute'
-                  : daysUntilDue === 1
-                  ? 'Morgen'
-                  : `in ${daysUntilDue} Tagen`}
-              </Text>
-            )}
-          </View>
+          {/* Right: Priority Badge */}
+          <StatusBadge
+            label={getPriorityLabel()}
+            variant={getPriorityVariant()}
+          />
         </View>
       </Card>
     </TouchableOpacity>
@@ -178,111 +172,45 @@ export const ReminderCard: React.FC<ReminderCardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    marginBottom: 12,
+    marginBottom: spacing.md,
   },
   completedCard: {
     opacity: 0.6,
-  },
-  overdueCard: {
-    borderLeftWidth: 4,
-    borderLeftColor: '#EF4444',
   },
   content: {
     flexDirection: 'row',
     alignItems: 'flex-start',
   },
-  checkboxContainer: {
-    marginRight: 12,
-    paddingTop: 2,
+  iconContainer: {
+    marginRight: spacing.md,
+    paddingTop: spacing.xs,
   },
-  mainContent: {
+  textContent: {
     flex: 1,
-    marginRight: 12,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 4,
+    marginRight: spacing.md,
   },
   title: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#1F2937',
-    flex: 1,
+    fontSize: typography.fontSize.lg,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.text.primary,
+    marginBottom: spacing.xs,
+  },
+  description: {
+    fontSize: typography.fontSize.sm,
+    color: colors.text.secondary,
+    marginBottom: spacing.sm,
+    lineHeight: typography.lineHeight.normal * typography.fontSize.sm,
+  },
+  meta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  dueDate: {
+    fontSize: typography.fontSize.sm,
+    fontWeight: typography.fontWeight.medium,
   },
   completedText: {
     textDecorationLine: 'line-through',
-    color: '#9CA3AF',
-  },
-  overdueIcon: {
-    marginLeft: 8,
-  },
-  description: {
-    fontSize: 14,
-    color: '#6B7280',
-    marginBottom: 8,
-    lineHeight: 20,
-  },
-  footer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  footerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flexWrap: 'wrap',
-    gap: 6,
-  },
-  priorityBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
-  },
-  priorityText: {
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  categoryBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
-    backgroundColor: '#F3F4F6',
-  },
-  categoryText: {
-    fontSize: 12,
-    color: '#6B7280',
-    fontWeight: '500',
-  },
-  recurringBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
-    backgroundColor: '#EEF2FF',
-  },
-  recurringText: {
-    fontSize: 12,
-    color: '#4F46E5',
-    fontWeight: '500',
-  },
-  dateContainer: {
-    alignItems: 'flex-end',
-  },
-  date: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#1F2937',
-    marginBottom: 4,
-  },
-  overdueDate: {
-    color: '#EF4444',
-  },
-  daysLeft: {
-    fontSize: 12,
-    color: '#6B7280',
-  },
-  overdueDaysLeft: {
-    color: '#EF4444',
-    fontWeight: '600',
+    color: colors.text.tertiary,
   },
 });

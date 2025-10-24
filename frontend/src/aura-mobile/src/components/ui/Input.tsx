@@ -7,6 +7,7 @@ import {
   TextInputProps,
   TouchableOpacity,
 } from 'react-native';
+import { colors, spacing, typography, borderRadius } from '../../theme';
 
 interface InputProps extends TextInputProps {
   label?: string;
@@ -52,7 +53,7 @@ export const Input: React.FC<InputProps> = ({
         {leftIcon && <View style={styles.leftIcon}>{leftIcon}</View>}
         <TextInput
           style={[styles.input, leftIcon ? styles.inputWithLeftIcon : undefined]}
-          placeholderTextColor="#9CA3AF"
+          placeholderTextColor={colors.text.tertiary}
           secureTextEntry={secureTextEntry && !isPasswordVisible}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
@@ -79,53 +80,53 @@ export const Input: React.FC<InputProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 16,
+    marginBottom: spacing.lg,
   },
   label: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#374151',
-    marginBottom: 8,
+    fontSize: typography.fontSize.md,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.text.primary,
+    marginBottom: spacing.sm,
   },
   required: {
-    color: '#EF4444',
+    color: colors.error.main,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: '#E5E7EB',
-    paddingHorizontal: 16,
+    backgroundColor: colors.background.primary,
+    borderRadius: borderRadius.lg,
+    borderWidth: 1,
+    borderColor: colors.border.light,
+    paddingHorizontal: spacing.lg,
   },
   inputContainerFocused: {
-    borderColor: '#4F46E5',
+    borderColor: colors.border.focus,
   },
   inputContainerError: {
-    borderColor: '#EF4444',
+    borderColor: colors.border.error,
   },
   input: {
     flex: 1,
-    paddingVertical: 12,
-    fontSize: 16,
-    color: '#1F2937',
+    paddingVertical: spacing.md,
+    fontSize: typography.fontSize.md,
+    color: colors.text.primary,
   },
   inputWithLeftIcon: {
-    paddingLeft: 8,
+    paddingLeft: spacing.sm,
   },
   leftIcon: {
-    marginRight: 8,
+    marginRight: spacing.sm,
   },
   rightIcon: {
-    marginLeft: 8,
+    marginLeft: spacing.sm,
   },
   passwordToggle: {
     fontSize: 20,
   },
   errorText: {
-    fontSize: 12,
-    color: '#EF4444',
-    marginTop: 4,
+    fontSize: typography.fontSize.sm,
+    color: colors.error.main,
+    marginTop: spacing.xs,
   },
 });
