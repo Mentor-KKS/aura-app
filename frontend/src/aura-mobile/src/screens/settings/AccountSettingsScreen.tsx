@@ -11,7 +11,7 @@ import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { useAuthStore } from '../../state/authStore';
 import { useUIStore } from '../../state/uiStore';
-import { userApi } from '../../services/userApi';
+import { userApi } from '../../services/api/userApi';
 
 interface AccountSettingsScreenProps {
   navigation: any;
